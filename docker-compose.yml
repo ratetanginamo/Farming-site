@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./backend:/app
+    environment:
+      - NODE_ENV=development
+
+  ml-service:
+    build: ./ml-service
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./ml-service:/app
+
+  iot-simulator:
+    build: ./iot-gateway
+    # We'll use a tiny Node image built for the simulator
+    command: node simulator.js
+    depends_on:
+      - backend
+    environment:
+      - BACKEND_URL=http://backend:3001/api/devices
+      
